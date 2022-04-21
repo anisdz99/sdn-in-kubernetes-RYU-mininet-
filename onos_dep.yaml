@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: onos-deployment
+  labels:
+    app: onos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: onos
+  template:
+    metadata:
+      labels:
+        app: onos
+    spec:
+      containers:
+      - name: onos
+        image: onosproject/onos
+        command: ["/bin/sh","-c"]
+        args: ["cd ryu/ryu/app;ryu run simple_switch_13.py gui_topology/gui_topology.py --observe-links --verbose"]
+
