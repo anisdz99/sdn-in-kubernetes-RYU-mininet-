@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ryu-deployment
+  labels:
+    app: ryu
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ryu
+  template:
+    metadata:
+      labels:
+        app: ryu
+    spec:
+      containers:
+      - name: ryu
+        image: assiapfe2022/ryu-sfc:v2
+        command: ["/bin/sh","-c"]
+        args: ["ryu-manager --observe-links ~/flowmanager/flowmanager.py  ./sfc_app.py "]
+
