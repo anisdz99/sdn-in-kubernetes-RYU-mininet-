@@ -1,0 +1,69 @@
+docker build -t assiapfe2022/ryu-sfc:v3 .
+docker push -t assiapfe2022/ryu-sfc:v3
+
+minikube start --driver=virtualbox --nodes 2 -p PFE 
+
+
+
+minikube service --url ryu-controller-service    -p multinode-demo
+minikube service --url ryu-service    -p multinode-demo
+
+ kubectl create -f ryu_dep.yaml 
+ kubectl desvribe ryu-deployment-98f87b44d-bf75t
+ kubectl describe ryu-deployment-98f87b44d-bf75t
+ kubectl describe pod ryu-deployment-98f87b44d-bf75t
+ clear
+ kubectl describe pod ryu-deployment-98f87b44d-bf75t
+  
+ nano ryu_controller_service.yaml 
+ nano ryu_service.yaml 
+ kubectl create -f ryu_controller_service.yaml 
+ kubectl create -f ryu_service.yaml 
+ kubectl get svc
+ kubectl get svc -o wide
+
+
+
+
+http://192.168.59.133:30483/ui/pages/index.html
+
+docker rm -f $(docker ps -a -q)
+
+
+ docker run -itd --rm --name src --cap-add NET_ADMIN assiapfe2022/ovs:v2 tcp:192.168.59.133:31947
+ docker run -itd --rm --name dst --cap-add NET_ADMIN assiapfe2022/ovs:v2 tcp:192.168.59.133:31947
+ docker exec src ip ad
+ docker exec dst ip ad
+ 
+
+
+ docker run -itd --rm --name fwd1 --cap-add NET_ADMIN assiapfe2022/ovs:v2 tcp:192.168.59.133:31947  --reg='{name='forwarder1',vnf_id=1,type_id=1,group_id=1,iftype=3,bidirectional=true,geo_location='server777.rack2.row3.room4'}' -a 172.17.0.1 -p 30012-n registration
+ docker run -itd --rm --name fwd2 --cap-add NET_ADMIN assiapfe2022/ovs:v2 tcp:192.168.59.133:31947  --reg='{name='forwarder2',vnf_id=2,type_id=1,group_id=1,iftype=3,bidirectional=true,geo_location='server777.rack2.row3.room4'}' -a 172.17.0.1 -p 30012-n registration
+ docker run -itd --rm --name fwd4 --cap-add NET_ADMIN assiapfe2022/ovs:v2 tcp:192.168.59.133:31947  --reg='{name='forwarder4',vnf_id=4,type_id=1,group_id=1,iftype=3,bidirectional=true,geo_location='server777.rack2.row3.room4'}' -a 172.17.0.1 -p 30012-n registration 
+
+
+ docker run -itd --rm --name fwd555 --cap-add NET_ADMIN assiapfe2022/ovs:v2 tcp:192.168.59.133:31947  --reg='{name='forwarder555',vnf_id=555,type_id=1,group_id=1,iftype=3,bidirectional=False,geo_location='server555.rack2.row3.room4'}' -a 172.17.0.1 -p 30012-n registration
+ docker run -itd --rm --name fwd777 --cap-add NET_ADMIN assiapfe2022/ovs:v2 tcp:192.168.59.133:31947  --reg='{name='forwarder777',vnf_id=777,type_id=1,group_id=1,iftype=3,bidirectional=True,geo_location='server777.rack2.row3.room4'}' -a 172.17.0.1 -p 30012-n registration 
+
+
+
+ docker exec src traceroute -I 172.17.0.3
+ docker exec dst traceroute -I 172.17.0.2
+ 
+
+
+
+for i in $(docker ps --format {{.Names}}); do echo $i; docker exec $i ovs-ofctl -O OpenFlow13 dump-flows lan-br; done
+ 
+
+curl -v http://192.168.59.133:30483/add_flow/5
+ 
+
+ for i in $(docker ps --format {{.Names}}); do echo $i; docker exec $i ovs-ofctl -O OpenFlow13 dump-flows lan-br; done
+ 
+
+ docker exec src traceroute -I 172.17.0.3
+ docker exec dst traceroute -I 172.17.0.2
+ 
+
+ for i in $(docker ps --format {{.Names}}); do echo $i; docker exec $i ovs-ofctl -O OpenFlow13 dump-flows lan-br; done
